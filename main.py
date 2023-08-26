@@ -8,11 +8,11 @@ from customtkinter import *
 
 
 #Переменные
-#blocked_sites = ['www.tinkoff.ru', 'tinkoff.ru', 'www.google.com', 'www.yandex.ru', 'google.com', 'yandex.ru', 'yandex.com', 'www.yandex.ru', 'youtube.com', 'www.youtube.com', 'ya.ru', 'www.ya.ru', 'dzen.ru']
+blocked_sites = ['www.tinkoff.ru', 'tinkoff.ru', 'www.google.com', 'www.yandex.ru', 'google.com', 'yandex.ru', 'yandex.com', 'www.yandex.ru', 'youtube.com', 'www.youtube.com', 'ya.ru', 'www.ya.ru', 'dzen.ru']
 
-#redirect_url = '127.0.0.1'
+redirect_url = '127.0.0.1'
 
-#hosts=r'C:\Windows\System32\drivers\etc\hosts'
+hosts=r'C:\Windows\System32\drivers\etc\hosts'
 
 correct = '5642'
 
@@ -22,20 +22,20 @@ correct = '5642'
 #Блокировка
 def block():
     #Блокируют клавишы, указанные в ковычках
-    #keyboard.add_hotkey("alt + f4", lambda: None, suppress =True)
+    keyboard.add_hotkey("alt + f4", lambda: None, suppress =True)
     keyboard.add_hotkey("ctrl+shift+esc", lambda: None, suppress =True)
     keyboard.add_hotkey("ctrl+alt+del", lambda: None, suppress =True)
     keyboard.add_hotkey("win+d", lambda: None, suppress =True)
     keyboard.add_hotkey("win+m", lambda: None, suppress =True)
 
     #Блокировка сайтов
-    #with open(hosts, 'r+') as file:
-    #    src= file.read()
-    #    for site in blocked_sites:
-    #        if site in src:
-    #            pass
-    #        else:
-    #            file.write(redirect_url+" "+site+"\n")
+    with open(hosts, 'r+') as file:
+        src= file.read()
+        for site in blocked_sites:
+            if site in src:
+                pass
+            else:
+                file.write(redirect_url+" "+site+"\n")
 
 def block_login():
     global correct
@@ -63,20 +63,20 @@ def login():
     if password == correct:
         print('Unlocked!')
         #Разблокировка сочетаний клавиш
-        #keyboard.remove_hotkey("alt + f4")
+        keyboard.remove_hotkey("alt + f4")
         keyboard.remove_hotkey("ctrl+shift+esc")
         keyboard.remove_hotkey("ctrl+alt+del")
         keyboard.remove_hotkey("win+d")
         keyboard.remove_hotkey("win+m")
 
         #Разблокировка сайтов
-        #with open(hosts, 'r+') as file:
-        #    src= file.readlines()
-        #    file.seek(0)
-        #    for line in src:
-        #        if not any(site in line for site in blocked_sites):
-        #            file.write(line)
-        #    file.truncate()
+        with open(hosts, 'r+') as file:
+            src= file.readlines()
+            file.seek(0)
+            for line in src:
+                if not any(site in line for site in blocked_sites):
+                    file.write(line)
+            file.truncate()
 
         #Закрытие окна
         app.destroy()
