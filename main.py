@@ -29,13 +29,14 @@ def block():
     keyboard.add_hotkey("win+m", lambda: None, suppress =True)
 
     #Блокировка сайтов
-    with open(hosts, 'r+') as file:
-        src= file.read()
-        for site in blocked_sites:
-            if site in src:
-                pass
-            else:
-                file.write(redirect_url+" "+site+"\n")
+    #with open(hosts, 'r+') as file:
+    #    src= file.read()
+    #    for site in blocked_sites:
+    #        if site in src:
+    #            pass
+    #        else:
+    #            file.write(redirect_url+" "+site+"\n")
+    print("Sites don't lock. Check 39 string")
 
 def block_login():
     global correct
@@ -70,13 +71,13 @@ def login():
         keyboard.remove_hotkey("win+m")
 
         #Разблокировка сайтов
-        with open(hosts, 'r+') as file:
-            src= file.readlines()
-            file.seek(0)
-            for line in src:
-                if not any(site in line for site in blocked_sites):
-                    file.write(line)
-            file.truncate()
+        #with open(hosts, 'r+') as file:
+        #    src= file.readlines()
+        #    file.seek(0)
+        #    for line in src:
+        #        if not any(site in line for site in blocked_sites):
+        #            file.write(line)
+        #    file.truncate()
 
         #Закрытие окна
         app.destroy()
@@ -86,8 +87,8 @@ def guest():
     print('Login with guest')
     block()
     app.destroy()
-    totalblock()
-
+    timer()
+    
 #Полная блокировка (активируется по истечению таймера или по нажатию ctrl+shift)
 def totalblock():
     global block_screen
@@ -114,6 +115,30 @@ def totalblock():
 
     #Запуск экрана блокировки
     block_screen.mainloop()
+
+def timer():
+    def update_timer():
+        remaining_time = int(time_var.get())
+        if remaining_time > 0:
+            remaining_time -= 1
+            time_var.set(remaining_time)
+            time_label.after(1000, update_timer)
+        else:
+            totalblock()
+
+    timer = CTk()
+    timer.overrideredirect(True)  # убираем рамку у окна
+    timer.geometry("150x50+20+20")  # небольшой размер, размещение в углу экрана
+
+    time_var = StringVar()
+    time_var.set(5)  # начальное время в секундах
+
+    time_label = CTkLabel(timer, textvariable=time_var, font=("Arial", 20))
+    time_label.pack()
+
+    update_timer()
+
+    timer.mainloop()
 
 def maindef():
     #Настраиваем окно авторизации
