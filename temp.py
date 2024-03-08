@@ -1,48 +1,75 @@
+#
+#
+#       Simple PyQt/PySide Web Browser.
+#
+#       pythonassets.com
+#
+#
+
 import sys
-import elevate
-import wget
-import shutil
-import winreg
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtWebEngineWidgets import *
 
-class MainWindow(QMainWindow):
+from PyQt6.QtCore import QUrl
+from PyQt6.QtWidgets import QApplication, QHBoxLayout, QLineEdit
+from PyQt6.QtWidgets import QMainWindow, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWebEngineWidgets import QWebEngineView
+
+
+class Widgets(QMainWindow):
+
     def __init__(self):
-        super(MainWindow, self).__init__()
-        self.browser = QWebEngineView()
-        self.browser.setUrl(QUrl('http://google.com'))
-        self.setCentralWidget(self.browser)
-        self.showMaximized()
+        QMainWindow.__init__(self)
+        self.setWindowTitle("Simple Web Browser")
+        self.widget = QWidget(self)
 
-elevate.elevate()
+        # Where the webpage is rendered.
+        self.webview = QWebEngineView()
+        self.webview.load(QUrl("https://2ip.com"))
+        self.webview.urlChanged.connect(self.url_changed)
+
+        # Navigation buttons.
+        self.back_button = QPushButton("<")
+        self.back_button.clicked.connect(self.webview.back)
+        self.forward_button = QPushButton(">")
+        self.forward_button.clicked.connect(self.webview.forward)
+        self.refresh_button = QPushButton("Refresh")
+        self.refresh_button.clicked.connect(self.webview.reload)
+
+        # URL address bar.
+        self.url_text = QLineEdit()
+
+        # Button to load the current page.
+        self.go_button = QPushButton("Go")
+        self.go_button.clicked.connect(self.url_set)
+
+        self.toplayout = QHBoxLayout()
+        self.toplayout.addWidget(self.back_button)
+        self.toplayout.addWidget(self.forward_button)
+        self.toplayout.addWidget(self.refresh_button)
+        self.toplayout.addWidget(self.url_text)
+        self.toplayout.addWidget(self.go_button)
+
+        self.layout = QVBoxLayout()
+        self.layout.addLayout(self.toplayout)
+        self.layout.addWidget(self.webview)
+
+        self.widget.setLayout(self.layout)
+        self.setCentralWidget(self.widget)
+
+    def url_changed(self, url):
+        """Refresh the address bar"""
+        self.url_text.setText(url.toString())
+
+    def url_set(self):
+        """Load the new URL"""
+        self.webview.setUrl(QUrl(self.url_text.text()))
 
 
-#wget.download('https://no-snow.ru/index.html')
-#wget.download('https://no-snow.ru/index.html')
-
-
-#os.system('mkdir C:\Program Files\YAFaL')
-#shutil.copy('YAFaL.exe', 'C:\Program Files\YAFaL')
-#shutil.copy('YAFaL.ink', 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs')
-
-
-key = winreg.HKEY_CURRENT_USER
-key_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
-app_name = "MyApp"
-app_path = r"C:\Program Files\YAFaL\YAFal.exe"
-
-try:
-    reg_key = winreg.OpenKey(key, key_path, 0, winreg.KEY_ALL_ACCESS)
-    winreg.SetValueEx(reg_key, app_name, 0, winreg.REG_SZ, app_path)
-    winreg.CloseKey(reg_key)
-    print("Приложение успешно добавлено в автозагрузку!")
-except Exception as e:
-    print("Что-то пошло не так:", e)
-
-
-
-app = QApplication(sys.argv)
-QApplication.setApplicationName('App installed!')
-window = MainWindow()
-app.exec_()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = Widgets()
+    window.show()
+    try:
+        sys.exit(app.exec_())
+    except AttributeError:
+        sys.exit(app.exec())

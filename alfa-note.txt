@@ -1,37 +1,18 @@
 ToDo:
-экран закрытия
+- Timer
+-  Инструкция
+- Вайтлист
 
-#Открываем программу от имени администратора
-#ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+#Line
+1) Set settings 😅
+    1) Password
+    2) Telegram bot
+    3) Time
+    4) Blacklist / Whitelist
+    5) Create children profile
+2) Copy to folder
+3) Copy to autostartup
+SCHTASKS /Create /SC ONLOGON /TN YAFaL /TR C:\Windows\System32\cmd.exe /RL HIGHEST
 
-#Проверка запуска от имени администратора
-#if ctypes.windll.shell32.IsUserAnAdmin():
-#    if __name__ == "__main__":
-#        main()
-#else:
-#    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
-
-
-
-
-#Таймер
-def timer():
-    global stop
-    while not stop:
-        global minutes
-        global hours
-        minutes -= 1
-        if minutes == 0:
-            hours -= 1
-            minutes = 59
-        if (hours == 0 or hours == 00) and minutes == 00:
-            totalblock()
-        app.after(60000, timer)
-
-stop = False
-
-
-#Создаем отдельный поток для таймера
-clock_thread = Thread(target=timer)
-
-clock_thread.start()
+#Struct adddata.yafal
+1st row - password
